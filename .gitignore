@@ -1,3 +1,5 @@
 .idea
 .vscode
 node_modules
+testnet_me.pkey
+testnet_polluterofminds.pkey

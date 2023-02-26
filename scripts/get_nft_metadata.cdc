@@ -1,16 +1,18 @@
-import ExampleNFT from "../../contracts/ExampleNFT.cdc"
-import MetadataViews from "../../contracts/MetadataViews.cdc"
+import BSide from 0x3f99d68674bc7afa
+import SideBMetadata from 0x3f99d68674bc7afa
 
 /// This script gets all the view-based metadata associated with the specified NFT
 /// and returns it as a single struct
 
 pub struct NFT {
     pub let name: String
+    pub let title: String
+    pub let artist: String
     pub let description: String
+    pub let date: String
     pub let thumbnail: String
     pub let owner: Address
     pub let type: String
-    pub let royalties: [MetadataViews.Royalty]
     pub let externalURL: String
     pub let serialNumber: UInt64
     pub let collectionPublicPath: PublicPath
@@ -25,18 +27,20 @@ pub struct NFT {
     pub let collectionSquareImage: String
     pub let collectionBannerImage: String
     pub let collectionSocials: {String: String}
-    pub let edition: MetadataViews.Edition
-    pub let traits: MetadataViews.Traits
-		pub let medias: MetadataViews.Medias?
-		pub let license: MetadataViews.License?
+    pub let edition: SideBMetadata.Edition
+    pub let traits: SideBMetadata.Traits
+		pub let medias: SideBMetadata.Medias?
+		pub let license: SideBMetadata.License?
 
     init(
         name: String,
+        title: String, 
+        artist: String,
         description: String,
+        date: String,
         thumbnail: String,
         owner: Address,
-        nftType: String,
-        royalties: [MetadataViews.Royalty],
+        nftType: String,        
         externalURL: String,
         serialNumber: UInt64,
         collectionPublicPath: PublicPath,
@@ -51,17 +55,19 @@ pub struct NFT {
         collectionSquareImage: String,
         collectionBannerImage: String,
         collectionSocials: {String: String},
-        edition: MetadataViews.Edition,
-        traits: MetadataViews.Traits,
-				medias:MetadataViews.Medias?,
-				license:MetadataViews.License?
+        edition: SideBMetadata.Edition,
+        traits: SideBMetadata.Traits,
+				medias:SideBMetadata.Medias?,
+				license:SideBMetadata.License?
     ) {
         self.name = name
+        self.title = title
+        self.artist = artist
         self.description = description
+        self.date = date
         self.thumbnail = thumbnail
         self.owner = owner
-        self.type = nftType
-        self.royalties = royalties
+        self.type = nftType        
         self.externalURL = externalURL
         self.serialNumber = serialNumber
         self.collectionPublicPath = collectionPublicPath
@@ -87,25 +93,25 @@ pub fun main(address: Address, id: UInt64): NFT {
     let account = getAccount(address)
 
     let collection = account
-        .getCapability(ExampleNFT.CollectionPublicPath)
-        .borrow<&{ExampleNFT.ExampleNFTCollectionPublic}>()
+        .getCapability(BSide.CollectionPublicPath)
+        .borrow<&{BSide.BSideCollectionPublic}>()
         ?? panic("Could not borrow a reference to the collection")
 
-    let nft = collection.borrowExampleNFT(id: id)!
+    let nft = collection.borrowBSide(id: id)!
 
     // Get the basic display information for this NFT
-    let display = MetadataViews.getDisplay(nft)!
+    let display = SideBMetadata.getDisplay(nft)!
 
     // Get the royalty information for the given NFT
-    let royaltyView = MetadataViews.getRoyalties(nft)!
+    // let royaltyView = SideBMetadata.getRoyalties(nft)!
 
-    let externalURL = MetadataViews.getExternalURL(nft)!
+    let externalURL = SideBMetadata.getExternalURL(nft)!
 
-    let collectionDisplay = MetadataViews.getNFTCollectionDisplay(nft)!
-    let nftCollectionView = MetadataViews.getNFTCollectionData(nft)!
+    let collectionDisplay = SideBMetadata.getNFTCollectionDisplay(nft)!
+    let nftCollectionView = SideBMetadata.getNFTCollectionData(nft)!
 
-    let nftEditionView = MetadataViews.getEditions(nft)!
-    let serialNumberView = MetadataViews.getSerial(nft)!
+    let nftEditionView = SideBMetadata.getEditions(nft)!
+    let serialNumberView = SideBMetadata.getSerial(nft)!
     
     let owner: Address = nft.owner!.address!
     let nftType = nft.getType()
@@ -115,18 +121,20 @@ pub fun main(address: Address, id: UInt64): NFT {
         collectionSocials[key] = collectionDisplay.socials[key]!.url
     }
 
-		let traits = MetadataViews.getTraits(nft)!
+		let traits = SideBMetadata.getTraits(nft)!
 
-		let medias=MetadataViews.getMedias(nft)
-		let license=MetadataViews.getLicense(nft)
+		let medias=SideBMetadata.getMedias(nft)
+		let license=SideBMetadata.getLicense(nft)
 
     return NFT(
         name: display.name,
+        title: display.title,
+        artist: display.artist,
         description: display.description,
+        date: display.date,
         thumbnail: display.thumbnail.uri(),
         owner: owner,
-        nftType: nftType.identifier,
-        royalties: royaltyView.getRoyalties(),
+        nftType: nftType.identifier,        
         externalURL: externalURL.url,
         serialNumber: serialNumberView.number,
         collectionPublicPath: nftCollectionView.publicPath,

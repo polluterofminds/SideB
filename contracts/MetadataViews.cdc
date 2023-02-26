@@ -1,5 +1,5 @@
-import FungibleToken from "./utility/FungibleToken.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
+import FungibleToken from 0x3f99d68674bc7afa
+import NonFungibleToken from 0x3f99d68674bc7afa
 
 /// This contract implements the metadata standard proposed
 /// in FLIP-0636.
@@ -11,7 +11,7 @@ import NonFungibleToken from "./NonFungibleToken.cdc"
 /// a different kind of metadata, such as a creator biography
 /// or a JPEG image file.
 ///
-pub contract MetadataViews {
+pub contract SideBMetadata {
 
     /// Provides access to a set of metadata views. A struct or 
     /// resource (e.g. an NFT) can implement this interface to provide access to 
@@ -99,6 +99,8 @@ pub contract MetadataViews {
         /// be short an concise.
         ///
         pub let name: String
+        pub let title: String
+        pub let artist: String
 
         /// A written description of the object. 
         ///
@@ -106,6 +108,7 @@ pub contract MetadataViews {
         /// so can be more verbose (e.g. a paragraph instead of a single line).
         ///
         pub let description: String
+        pub let date: String
 
         /// A small thumbnail representation of the object.
         ///
@@ -116,11 +119,17 @@ pub contract MetadataViews {
 
         init(
             name: String,
+            title: String,
+            artist: String,
             description: String,
+            date: String,
             thumbnail: AnyStruct{File}
         ) {
             self.name = name
+            self.title = title
+            self.artist = artist
             self.description = description
+            self.date = date
             self.thumbnail = thumbnail
         }
     }
@@ -523,8 +532,8 @@ pub contract MetadataViews {
             createEmptyCollectionFunction: ((): @NonFungibleToken.Collection)
         ) {
             pre {
-                publicLinkedType.isSubtype(of: Type<&{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, MetadataViews.ResolverCollection}>()): "Public type must include NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, and MetadataViews.ResolverCollection interfaces."
-                providerLinkedType.isSubtype(of: Type<&{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, MetadataViews.ResolverCollection}>()): "Provider type must include NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, and MetadataViews.ResolverCollection interface."
+                publicLinkedType.isSubtype(of: Type<&{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, SideBMetadata.ResolverCollection}>()): "Public type must include NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, and SideBMetadata.ResolverCollection interfaces."
+                providerLinkedType.isSubtype(of: Type<&{NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, SideBMetadata.ResolverCollection}>()): "Provider type must include NonFungibleToken.Provider, NonFungibleToken.CollectionPublic, and SideBMetadata.ResolverCollection interface."
             }
             self.storagePath=storagePath
             self.publicPath=publicPath

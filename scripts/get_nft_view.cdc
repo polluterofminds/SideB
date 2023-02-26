@@ -1,5 +1,5 @@
-import ExampleNFT from "../../contracts/ExampleNFT.cdc"
-import MetadataViews from "../../contracts/MetadataViews.cdc"
+import ExampleNFT from 0x3f99d68674bc7afa
+import MetadataViews from 0x3f99d68674bc7afa
 
 pub struct NFTView {
     pub let id: UInt64
